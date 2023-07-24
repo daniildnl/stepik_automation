@@ -9,10 +9,6 @@ def pytest_addoption(parser):
     parser.addoption('--browser_name', action='store', default='chrome', help="Choose browser: Chrome or Firefox")
     parser.addoption('--language', action='store', default='en', help='Choose language ru, en, fr, es ... etc')
 
-def mybrowserlanguage(request):
-    myvariableforlink = request.config.getoption("--language")
-    print(myvariableforlink)
-    return myvariableforlink
 
 @pytest.fixture(scope="function")
 def driver(request):
