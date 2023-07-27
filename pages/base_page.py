@@ -40,6 +40,10 @@ class BasePage:
 
         return True
 
+    def go_to_basket_page(self):
+        button = self.driver.find_element(*BasePageLocators.BASKET_BUTTON)
+        button.click()
+
     def go_to_login_page(self):
         link = self.driver.find_element(*BasePageLocators.LOGIN_LINK)
         link.click()
