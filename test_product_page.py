@@ -2,6 +2,31 @@ import pytest
 from .pages.product_page import ProductPage
 from .pages.login_page import LoginPage
 from .pages.basket_page import BasketPage
+import time
+
+
+class TestUserAddToBasketFromProductPage:
+    @pytest.fixture(scope='function', autouse=True)
+    def setup(self, driver):
+        link = 'http://selenium1py.pythonanywhere.com/accounts/login/'
+        page = LoginPage(driver, link)
+        page.open()
+        page.register_new_user(email=str(time.time()) + "@fakemail.org", password='4rhfeu45fhkmhlnn3853')
+        page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, driver):
+        link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
+        page = ProductPage(driver, link, 0)
+        page.open()
+        page.success_alert_isnt_present()
+
+    def test_user_can_add_product_to_basket(self, driver):
+        link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
+        page = ProductPage(driver, link)
+        page.open()
+        page.add_to_basket()
+        page.should_be_same_name_in_alert()
+        page.should_be_same_price_in_alert()
 
 
 def test_guest_should_see_login_link_on_product_page(driver):
@@ -29,13 +54,6 @@ def test_guest_cant_see_success_message_after_adding_product_to_basket(driver):
     page.success_alert_isnt_present()
 
 
-def test_guest_cant_see_success_message(driver):
-    link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
-    page = ProductPage(driver, link, 0)
-    page.open()
-    page.success_alert_isnt_present()
-
-
 @pytest.mark.xfail
 def test_message_disappeared_after_adding_product_to_basket(driver):
     link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
@@ -55,6 +73,13 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(driver):
     basket_page.is_basket_have_items()
 
 
+def test_guest_cant_see_success_message(driver):
+    link = 'http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/'
+    page = ProductPage(driver, link, 0)
+    page.open()
+    page.success_alert_isnt_present()
+
+
 @pytest.mark.parametrize('link', [0, 1, 2, 3, 4, 5, 6, pytest.param(7, marks=pytest.mark.xfail), 8, 9])
 def test_guest_can_add_product_to_basket(driver, link):
     link = f"http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/?promo=offer{link}"
@@ -64,6 +89,7 @@ def test_guest_can_add_product_to_basket(driver, link):
     page.solve_quiz_and_get_code()
     page.should_be_same_name_in_alert()
     page.should_be_same_price_in_alert()
+
 
 
 
